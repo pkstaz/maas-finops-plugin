@@ -1,0 +1,73 @@
+# --- Plugin identity (required) ---
+name: maas-finops
+displayName: MaaS FinOps
+description: Showback and chargeback for Models-as-a-Service — tokens, subscriptions, API keys, and price per token
+version: 0.1.0
+
+# --- Maintainer (required) ---
+maintainer:
+  name: Carlos Estay
+  github: pkstaz
+
+# --- RHOAI compatibility (required) ---
+rhoai_compatibility:
+  min_version: "3.3.0"
+  tested_versions: ["3.3.0", "3.4.2"]
+
+# --- Deployment (required) ---
+# Cluster-shared: a single BFF reads MaaS CRDs, GPU inventory, and Thanos
+# metrics across the cluster to compute token cost for all tenants.
+deployment_model: cluster-shared
+
+image:
+  repository: quay.io/rh-ai-community-plugins/maas-finops
+  tag: "0.1.0"
+
+bff_image:
+  repository: quay.io/rh-ai-community-plugins/maas-finops-bff
+  tag: "0.1.0"
+
+# --- Installation (required) ---
+install:
+  method: automatic
+  namespace: cp-maas-finops
+  helm:
+    chart_path: chart/
+    registry: oci://quay.io/rh-ai-community-plugins/maas-finops-chart
+  prerequisites:
+    - type: api
+      name: maas.opendatahub.io/v1alpha1
+      description: Models-as-a-Service operator must be installed
+  instructions: https://github.com/rh-ai-community-plugins/maas-finops-plugin/blob/main/docs/deployment
+
+# --- Dashboard integration (required) ---
+remote:
+  type: module-federation
+  spec:
+    name: maasFinops
+    scope: maasFinops
+    remoteEntry: https://<your-openshift-route>/remoteEntry.js
+    paths:
+      - type: route
+        path: /maas-finops
+        extensions:
+          - maasFinops/extensions
+      - type: icon
+        path: maasFinops/Icon
+
+# --- RBAC (required) ---
+# Cluster roles are required: the BFF is a cluster-shared FinOps service that
+# lists MaaS CRDs, GPU nodes, OpenShift Infrastructure, and Thanos metrics
+# across namespaces. TokenReview/SAR authenticate dashboard users and gate
+# writes to the pricing ConfigMap. Users still need `finops.maas.io/plugins`
+# use (or admin) to see the plugin; catalog writes require the admin verb.
+rbac:
+  required_roles:
+    - maas-finops-user
+  cluster_roles: true
+
+# --- Support (optional) ---
+support:
+  repo: https://github.com/rh-ai-community-plugins/maas-finops-plugin
+  docs: https://github.com/rh-ai-community-plugins/maas-finops-plugin/tree/main/docs
+  issues: https://github.com/rh-ai-community-plugins/maas-finops-plugin/issues

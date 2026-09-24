@@ -1,0 +1,14 @@
+apiVersion: v2
+name: maas-finops-chart
+description: A Helm chart for deploying the RHOAI MaaS FinOps plugin
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - rhoai
+  - openshift-ai
+  - plugin
+  - maas-finops
+home: https://github.com/rh-ai-community-plugins/maas-finops-plugin
+sources:
+  - https://github.com/rh-ai-community-plugins/maas-finops-plugin

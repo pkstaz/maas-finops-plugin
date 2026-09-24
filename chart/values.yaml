@@ -1,0 +1,84 @@
+# Default values for maas-finops.
+
+namespace: cp-maas-finops
+
+image:
+  repository: quay.io/rh-ai-community-plugins/maas-finops
+  tag: ""
+  pullPolicy: IfNotPresent
+
+# Overrides .Chart.Name so deployed resources use the plugin name, not the
+# chart name (which has a -chart suffix to avoid OCI registry collisions).
+nameOverride: "maas-finops"
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /maas-finops
+          pathType: Prefix
+  tls: []
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+securityContext:
+  runAsNonRoot: true
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Thanos HTTP querier used by the BFF for vLLM / Limitador token metrics.
+thanos:
+  url: http://thanos-querier-data-science-thanos-querier.redhat-ods-monitoring.svc:10902
+
+pricing:
+  currency: USD
+  defaultPricePerMillion: 0.15
+
+# OpenShift user granted the maas-finops-admin ClusterRole (pricing writes).
+adminUser: admin
+
+# BFF (Backend For Frontend) service — Go API for inventory, metrics, and pricing.
+bff:
+  enabled: true
+  image:
+    repository: quay.io/rh-ai-community-plugins/maas-finops-bff
+    tag: ""
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  service:
+    type: ClusterIP
+    port: 3000
+    targetPort: 3000
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi

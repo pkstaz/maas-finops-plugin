@@ -1,0 +1,8 @@
+{{- if ne (include "maas-finops.namespace" .) .Release.Namespace }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ include "maas-finops.namespace" . }}
+  labels:
+    {{- include "maas-finops.labels" . | nindent 4 }}
+{{- end }}

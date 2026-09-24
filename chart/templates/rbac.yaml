@@ -1,0 +1,147 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "maas-finops.fullname" . }}-auth
+  labels:
+    {{- include "maas-finops.labels" . | nindent 4 }}
+rules:
+  - apiGroups: ["authentication.k8s.io"]
+    resources: ["tokenreviews"]
+    verbs: ["create"]
+  - apiGroups: ["authorization.k8s.io"]
+    resources: ["subjectaccessreviews"]
+    verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "maas-finops.fullname" . }}-auth
+  labels:
+    {{- include "maas-finops.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "maas-finops.fullname" . }}-auth
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "maas-finops.serviceAccountName" . }}
+    namespace: {{ include "maas-finops.namespace" . }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "maas-finops.fullname" . }}-maas
+  labels:
+    {{- include "maas-finops.labels" . | nindent 4 }}
+rules:
+  - apiGroups: ["maas.opendatahub.io"]
+    resources: ["maasmodelrefs", "maassubscriptions", "maasauthpolicies", "externalmodels"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["inference.opendatahub.io"]
+    resources: ["externalmodels", "externalproviders"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["serving.kserve.io"]
+    resources: ["llminferenceservices"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["nodes", "pods"]
+    verbs: ["get", "list"]
+  - apiGroups: ["config.openshift.io"]
+    resources: ["infrastructures"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "maas-finops.fullname" . }}-maas
+  labels:
+    {{- include "maas-finops.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "maas-finops.fullname" . }}-maas
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "maas-finops.serviceAccountName" . }}
+    namespace: {{ include "maas-finops.namespace" . }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "maas-finops.fullname" . }}-pricing
+  namespace: {{ include "maas-finops.namespace" . }}
+  labels:
+    {{- include "maas-finops.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "create", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "maas-finops.fullname" . }}-pricing
+  namespace: {{ include "maas-finops.namespace" . }}
+  labels:
+    {{- include "maas-finops.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "maas-finops.fullname" . }}-pricing
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "maas-finops.serviceAccountName" . }}
+    namespace: {{ include "maas-finops.namespace" . }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "maas-finops.fullname" . }}-metrics
+  labels:
+    {{- include "maas-finops.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-monitoring-view
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "maas-finops.serviceAccountName" . }}
+    namespace: {{ include "maas-finops.namespace" . }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "maas-finops.fullname" . }}-user
+  labels:
+    {{- include "maas-finops.labels" . | nindent 4 }}
+rules:
+  - apiGroups: ["finops.maas.io"]
+    resources: ["plugins"]
+    verbs: ["use"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "maas-finops.fullname" . }}-admin
+  labels:
+    {{- include "maas-finops.labels" . | nindent 4 }}
+rules:
+  - apiGroups: ["finops.maas.io"]
+    resources: ["plugins"]
+    verbs: ["use", "admin"]
+{{- if .Values.adminUser }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "maas-finops.fullname" . }}-admin-user
+  labels:
+    {{- include "maas-finops.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "maas-finops.fullname" . }}-admin
+subjects:
+  - kind: User
+    name: {{ .Values.adminUser | quote }}
+{{- end }}

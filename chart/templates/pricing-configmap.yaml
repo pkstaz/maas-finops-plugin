@@ -1,0 +1,30 @@
+{{- $ns := include "maas-finops.namespace" . }}
+{{- $existing := lookup "v1" "ConfigMap" $ns "maas-finops-pricing" }}
+{{- if not $existing }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: maas-finops-pricing
+  namespace: {{ $ns }}
+  labels:
+    {{- include "maas-finops.labels" . | nindent 4 }}
+data:
+  pricing.json: |
+    {
+      "currency": {{ .Values.pricing.currency | quote }},
+      "defaultPricePerMillion": {{ .Values.pricing.defaultPricePerMillion }},
+      "hardware": {
+        "provider": "auto",
+        "utilization": 0.8,
+        "margin": 0,
+        "priceType": "Consumption",
+        "machines": []
+      },
+      "models": {
+        "qwen3-06b": {
+          "displayName": "Qwen/Qwen3-0.6B",
+          "pricePerMillion": 0.05
+        }
+      }
+    }
+{{- end }}

@@ -1,0 +1,52 @@
+.mfp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--pf-t--global--spacer--md);
+  flex-wrap: wrap;
+}
+
+.mfp-muted {
+  color: var(--pf-t--global--text--color--subtle);
+  margin-block-start: var(--pf-t--global--spacer--xs);
+}
+
+.mfp-loading {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--pf-t--global--spacer--xl);
+}
+
+.mfp-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--pf-t--global--spacer--md);
+  margin-block-end: var(--pf-t--global--spacer--lg);
+}
+
+.mfp-stat {
+  font-size: var(--pf-t--global--font--size--2xl);
+  font-weight: var(--pf-t--global--font--weight--heading);
+}
+
+.mfp-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--md);
+}
+
+.mfp-quote {
+  font-size: var(--pf-t--global--font--size--3xl);
+  font-weight: var(--pf-t--global--font--weight--heading);
+}
+
+.mfp-quote-sub {
+  margin-block-start: var(--pf-t--global--spacer--xs);
+}
+
+.mfp-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pf-t--global--spacer--sm);
+  align-items: flex-end;
+}
