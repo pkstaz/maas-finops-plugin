@@ -4,7 +4,7 @@ namespace: cp-maas-finops
 
 image:
   repository: quay.io/cestayg/maas-finops
-  tag: "0.1.1"
+  tag: "0.1.2"
   pullPolicy: IfNotPresent
 
 # Overrides .Chart.Name so deployed resources use the plugin name, not the
@@ -68,7 +68,7 @@ bff:
   enabled: true
   image:
     repository: quay.io/cestayg/maas-finops-bff
-    tag: "0.1.1"
+    tag: "0.1.2"
     pullPolicy: IfNotPresent
   replicaCount: 1
   service:

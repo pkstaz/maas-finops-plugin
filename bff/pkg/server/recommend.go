@@ -268,9 +268,9 @@ func max(a, b int) int {
 func costNoteForProvider(provider string) string {
 	switch normalizeProvider(provider) {
 	case "aws":
-		return "Machine cost = AWS Linux on-demand catalog (us-east-1 list) or the USD/hour you enter (Savings Plans / EDP)."
+		return "Machine cost = AWS Price List Linux on-demand (or the USD/hour you enter for Savings Plans / EDP)."
 	case "ibmcloud":
-		return "Machine cost = IBM Cloud VPC GPU catalog (us-south list) or your account USD/hour."
+		return "Machine cost = IBM Global Catalog VPC instance-hour (or the USD/hour you enter)."
 	case "azure":
 		return "Machine cost = Azure Retail PAYG Linux or the USD/hour you enter (reservations / EA / discounts)."
 	case "baremetal":

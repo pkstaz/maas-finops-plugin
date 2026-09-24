@@ -1,6 +1,6 @@
 {
   "name": "maas-finops",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "RHOAI Dashboard plugin for MaaS FinOps: token usage, subscriptions, API keys and per-model pricing",
   "private": true,
   "_comment_name": "[PLUGIN-SPECIFIC] package name — change to {your-plugin}",

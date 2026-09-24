@@ -18,7 +18,7 @@ Install directly from the OCI registry — no need to clone the repo:
 
 ```bash
 helm install maas-finops oci://quay.io/rh-ai-community-plugins/maas-finops-chart \
-  --version 0.1.1 \
+  --version 0.1.2 \
   --namespace cp-maas-finops \
   --create-namespace
 ```
@@ -29,8 +29,8 @@ Or, from a local checkout of the repository:
 helm install maas-finops chart/ \
   --namespace cp-maas-finops \
   --create-namespace \
-  --set image.tag=0.1.1 \
-  --set bff.image.tag=0.1.1 \
+  --set image.tag=0.1.2 \
+  --set bff.image.tag=0.1.2 \
   --set adminUser=admin
 ```
 
@@ -45,7 +45,7 @@ Pass `--set` flags to customize the installation:
 
 ```bash
 helm install maas-finops oci://quay.io/rh-ai-community-plugins/maas-finops-chart \
-  --version 0.1.1 \
+  --version 0.1.2 \
   --namespace cp-maas-finops \
   --create-namespace \
   --set replicaCount=2
@@ -55,7 +55,7 @@ To deploy the frontend only (no BFF):
 
 ```bash
 helm install maas-finops oci://quay.io/rh-ai-community-plugins/maas-finops-chart \
-  --version 0.1.1 \
+  --version 0.1.2 \
   --namespace cp-maas-finops \
   --create-namespace \
   --set bff.enabled=false
@@ -228,7 +228,7 @@ Key values in `chart/values.yaml`:
 |---|---|---|
 | `namespace` | `cp-maas-finops` | Target namespace for all namespaced resources |
 | `image.repository` | `quay.io/cestayg/maas-finops` | Frontend container image |
-| `image.tag` | `"0.1.1"` | Frontend image tag |
+| `image.tag` | `"0.1.2"` | Frontend image tag |
 | `image.pullPolicy` | `IfNotPresent` | Image pull policy |
 | `replicaCount` | `1` | Frontend replicas |
 | `service.type` | `ClusterIP` | Frontend Service type |
@@ -239,7 +239,7 @@ Key values in `chart/values.yaml`:
 | `resources.limits.memory` | `128Mi` | Frontend memory limit |
 | `bff.enabled` | `true` | Deploy the BFF service |
 | `bff.image.repository` | `quay.io/cestayg/maas-finops-bff` | BFF container image |
-| `bff.image.tag` | `"0.1.1"` | BFF image tag |
+| `bff.image.tag` | `"0.1.2"` | BFF image tag |
 | `bff.service.port` | `3000` | BFF Service port |
 | `bff.resources.requests.cpu` | `100m` | BFF CPU request |
 | `bff.resources.requests.memory` | `128Mi` | BFF memory request |

@@ -3,6 +3,8 @@ package server
 import "testing"
 
 func TestLookupMachineCostProviders(t *testing.T) {
+	liveCloudPrices = false
+	t.Cleanup(func() { liveCloudPrices = true })
 	empty := HardwareConfig{}
 	if p, ok := catalogPrice("azure", "Standard_NC8as_T4_v3"); !ok || p != 0.752 {
 		t.Fatalf("azure catalog %v %v", p, ok)

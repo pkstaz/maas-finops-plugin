@@ -182,7 +182,7 @@ make chart-push
 
 ```bash
 helm install maas-finops oci://quay.io/rh-ai-community-plugins/maas-finops-chart \
-  --version 0.1.1 \
+  --version 0.1.2 \
   --namespace cp-maas-finops \
   --create-namespace
 ```

@@ -27,19 +27,25 @@ func lookupMachineCost(hw HardwareConfig, sku, region, provider string) CostSour
 			}
 		}
 	case "aws":
+		if cost, ok := fetchAWSOnDemand(sku, region); ok {
+			return cost
+		}
 		if p, ok := catalogPrice("aws", sku); ok {
 			return CostSource{
 				HourlyUSD: p, Kind: "catalog", SKU: sku,
 				Region: firstNonEmpty(region, "us-east-1"),
-				Note:   "AWS Linux on-demand catalog (us-east-1 list); reservations/EDP manually",
+				Note:   "local AWS Linux on-demand catalog (Price List unavailable)",
 			}
 		}
 	case "ibmcloud":
+		if cost, ok := fetchIBMCatalog(sku, region); ok {
+			return cost
+		}
 		if p, ok := catalogPrice("ibmcloud", sku); ok {
 			return CostSource{
 				HourlyUSD: p, Kind: "catalog", SKU: sku,
 				Region: firstNonEmpty(region, "us-south"),
-				Note:   "IBM Cloud VPC GPU catalog (us-south list); confirm in your account or enter manually",
+				Note:   "local IBM Cloud VPC catalog (Global Catalog unavailable)",
 			}
 		}
 	}

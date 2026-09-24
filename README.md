@@ -32,8 +32,8 @@ Prerequisites: Helm, `oc` CLI access, and access to `redhat-ods-applications` (t
 helm install maas-finops chart/ \
   --namespace cp-maas-finops \
   --create-namespace \
-  --set image.tag=0.1.1 \
-  --set bff.image.tag=0.1.1 \
+  --set image.tag=0.1.2 \
+  --set bff.image.tag=0.1.2 \
   --set adminUser=admin
 ```
 
@@ -44,9 +44,9 @@ helm install maas-finops chart/ \
   --namespace cp-maas-finops \
   --create-namespace \
   --set image.repository=quay.io/<org>/maas-finops \
-  --set image.tag=0.1.1 \
+  --set image.tag=0.1.2 \
   --set bff.image.repository=quay.io/<org>/maas-finops-bff \
-  --set bff.image.tag=0.1.1 \
+  --set bff.image.tag=0.1.2 \
   --set adminUser=admin
 ```
 
