@@ -2,7 +2,7 @@
 name: maas-finops
 displayName: MaaS FinOps
 description: Showback and chargeback for Models-as-a-Service — tokens, subscriptions, API keys, and price per token
-version: 0.1.0
+version: 0.1.1
 
 # --- Maintainer (required) ---
 maintainer:
@@ -20,12 +20,12 @@ rhoai_compatibility:
 deployment_model: cluster-shared
 
 image:
-  repository: quay.io/rh-ai-community-plugins/maas-finops
-  tag: "0.1.0"
+  repository: quay.io/cestayg/maas-finops
+  tag: "0.1.1"
 
 bff_image:
-  repository: quay.io/rh-ai-community-plugins/maas-finops-bff
-  tag: "0.1.0"
+  repository: quay.io/cestayg/maas-finops-bff
+  tag: "0.1.1"
 
 # --- Installation (required) ---
 install:

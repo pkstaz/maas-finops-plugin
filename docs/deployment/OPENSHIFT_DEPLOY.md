@@ -18,7 +18,7 @@ Install directly from the OCI registry — no need to clone the repo:
 
 ```bash
 helm install maas-finops oci://quay.io/rh-ai-community-plugins/maas-finops-chart \
-  --version 0.1.0 \
+  --version 0.1.1 \
   --namespace cp-maas-finops \
   --create-namespace
 ```
@@ -28,7 +28,10 @@ Or, from a local checkout of the repository:
 ```bash
 helm install maas-finops chart/ \
   --namespace cp-maas-finops \
-  --create-namespace
+  --create-namespace \
+  --set image.tag=0.1.1 \
+  --set bff.image.tag=0.1.1 \
+  --set adminUser=admin
 ```
 
 This creates:
@@ -42,7 +45,7 @@ Pass `--set` flags to customize the installation:
 
 ```bash
 helm install maas-finops oci://quay.io/rh-ai-community-plugins/maas-finops-chart \
-  --version 0.1.0 \
+  --version 0.1.1 \
   --namespace cp-maas-finops \
   --create-namespace \
   --set replicaCount=2
@@ -52,7 +55,7 @@ To deploy the frontend only (no BFF):
 
 ```bash
 helm install maas-finops oci://quay.io/rh-ai-community-plugins/maas-finops-chart \
-  --version 0.1.0 \
+  --version 0.1.1 \
   --namespace cp-maas-finops \
   --create-namespace \
   --set bff.enabled=false
@@ -224,8 +227,8 @@ Key values in `chart/values.yaml`:
 | Parameter | Default | Description |
 |---|---|---|
 | `namespace` | `cp-maas-finops` | Target namespace for all namespaced resources |
-| `image.repository` | `quay.io/rh-ai-community-plugins/maas-finops` | Frontend container image |
-| `image.tag` | `""` (defaults to appVersion) | Frontend image tag |
+| `image.repository` | `quay.io/cestayg/maas-finops` | Frontend container image |
+| `image.tag` | `"0.1.1"` | Frontend image tag |
 | `image.pullPolicy` | `IfNotPresent` | Image pull policy |
 | `replicaCount` | `1` | Frontend replicas |
 | `service.type` | `ClusterIP` | Frontend Service type |
@@ -235,8 +238,8 @@ Key values in `chart/values.yaml`:
 | `resources.limits.cpu` | `100m` | Frontend CPU limit |
 | `resources.limits.memory` | `128Mi` | Frontend memory limit |
 | `bff.enabled` | `true` | Deploy the BFF service |
-| `bff.image.repository` | `quay.io/rh-ai-community-plugins/maas-finops-bff` | BFF container image |
-| `bff.image.tag` | `""` (defaults to appVersion) | BFF image tag |
+| `bff.image.repository` | `quay.io/cestayg/maas-finops-bff` | BFF container image |
+| `bff.image.tag` | `"0.1.1"` | BFF image tag |
 | `bff.service.port` | `3000` | BFF Service port |
 | `bff.resources.requests.cpu` | `100m` | BFF CPU request |
 | `bff.resources.requests.memory` | `128Mi` | BFF memory request |

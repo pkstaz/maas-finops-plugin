@@ -3,8 +3,8 @@
 namespace: cp-maas-finops
 
 image:
-  repository: quay.io/rh-ai-community-plugins/maas-finops
-  tag: ""
+  repository: quay.io/cestayg/maas-finops
+  tag: "0.1.1"
   pullPolicy: IfNotPresent
 
 # Overrides .Chart.Name so deployed resources use the plugin name, not the
@@ -67,8 +67,8 @@ adminUser: admin
 bff:
   enabled: true
   image:
-    repository: quay.io/rh-ai-community-plugins/maas-finops-bff
-    tag: ""
+    repository: quay.io/cestayg/maas-finops-bff
+    tag: "0.1.1"
     pullPolicy: IfNotPresent
   replicaCount: 1
   service:

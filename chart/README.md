@@ -12,19 +12,21 @@ Deploys the MaaS FinOps RHOAI Dashboard plugin:
 helm install maas-finops chart/ \
   --namespace cp-maas-finops \
   --create-namespace \
+  --set image.tag=0.1.1 \
+  --set bff.image.tag=0.1.1 \
   --set adminUser=admin
 ```
 
-Override the image registry while waiting for `quay.io/rh-ai-community-plugins` access:
+Override the image registry:
 
 ```bash
 helm install maas-finops chart/ \
   --namespace cp-maas-finops \
   --create-namespace \
   --set image.repository=quay.io/<org>/maas-finops \
-  --set image.tag=0.1.0 \
+  --set image.tag=0.1.1 \
   --set bff.image.repository=quay.io/<org>/maas-finops-bff \
-  --set bff.image.tag=0.1.0
+  --set bff.image.tag=0.1.1
 ```
 
 See [docs/deployment/OPENSHIFT_DEPLOY.md](../docs/deployment/OPENSHIFT_DEPLOY.md) for dashboard registration.
