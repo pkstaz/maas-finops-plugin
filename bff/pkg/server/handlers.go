@@ -216,6 +216,73 @@ func (s *Server) handlePricing(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (s *Server) handleTokenomics(w http.ResponseWriter, r *http.Request) {
+	window := queryRange(r)
+	cat := s.pricing.Get(r.Context())
+	if s.mock {
+		writeJSON(w, http.StatusOK, mockTokenomics(window, cat))
+		return
+	}
+	models, modelErr := s.liveModels(r, window, cat)
+	writeJSON(w, http.StatusOK, tokenomicsFromRows(window, cat, models, errString(modelErr)))
+}
+
+// tokenomicsFromRows compares the consumed tokens per model with what those
+// tokens would cost at public as-a-service list prices across providers.
+func tokenomicsFromRows(window string, cat PricingCatalog, models []ModelRow, metricsErr string) TokenomicsResponse {
+	var totalIn, totalOut, totalTokens, totalReq, maas float64
+	byProvider := map[string]float64{}
+	items := make([]TokenomicsRow, 0, len(models))
+	for _, m := range models {
+		totalIn += m.TokensIn
+		totalOut += m.TokensOut
+		totalTokens += m.Tokens
+		totalReq += m.Requests
+		maas += m.Cost
+		row := TokenomicsRow{
+			Name: m.Name, DisplayName: m.DisplayName, Kind: m.Kind, Origin: m.Origin,
+			TokensIn: m.TokensIn, TokensOut: m.TokensOut, Tokens: m.Tokens, Requests: m.Requests,
+			MaasCost: m.Cost, Variants: []TokenomicsVariant{},
+		}
+		for _, v := range matchVendorRates(m.Name, m.DisplayName, m.TargetModel) {
+			mode := "tokens"
+			cost := costOfSplit(m.TokensIn, m.TokensOut, m.Tokens, 0, v.InputPerMillion, v.OutputPerMillion)
+			for _, p := range tokenomicsProviders {
+				if p.ID == v.Provider {
+					mode = p.Mode
+					break
+				}
+			}
+			if mode == "requests" {
+				cost = m.Requests * v.PerRequest
+			}
+			label := v.Provider
+			for _, p := range tokenomicsProviders {
+				if p.ID == v.Provider {
+					label = p.Label
+					break
+				}
+			}
+			row.Variants = append(row.Variants, TokenomicsVariant{
+				Provider: v.Provider, ProviderLabel: label, Model: v.Model,
+				InputPerMillion: v.InputPerMillion, OutputPerMillion: v.OutputPerMillion,
+				PerRequest: v.PerRequest, Mode: mode, Cost: cost, Note: v.Note,
+			})
+			byProvider[v.Provider] += cost
+		}
+		items = append(items, row)
+	}
+	providers := make([]TokenomicsProvider, 0, len(tokenomicsProviders))
+	for _, p := range tokenomicsProviders {
+		providers = append(providers, TokenomicsProvider{ID: p.ID, Label: p.Label, Mode: p.Mode, Cost: byProvider[p.ID]})
+	}
+	return TokenomicsResponse{
+		Range: window, Currency: cat.Currency, Source: "cluster", MetricsError: metricsErr,
+		TokensIn: totalIn, TokensOut: totalOut, Tokens: totalTokens, Requests: totalReq, MaasCost: maas,
+		Providers: providers, Items: items,
+	}
+}
+
 func (s *Server) liveModels(r *http.Request, window string, cat PricingCatalog) ([]ModelRow, error) {
 	ctx := r.Context()
 	discovered, err := s.k8s.listModels(ctx)

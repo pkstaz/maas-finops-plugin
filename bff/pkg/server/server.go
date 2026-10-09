@@ -54,6 +54,7 @@ func (s *Server) Handler() http.Handler {
 	api.HandleFunc("/api/subscriptions", s.handleSubscriptions)
 	api.HandleFunc("/api/apikeys", s.handleAPIKeys)
 	api.HandleFunc("/api/pricing", s.handlePricing)
+	api.HandleFunc("/api/tokenomics", s.handleTokenomics)
 	api.HandleFunc("/api/recommend", s.handleRecommend)
 	api.HandleFunc("/api/recommend/apply", s.handleRecommendApply)
 	api.HandleFunc("/api/simulator", s.handleSimulatorCatalog)

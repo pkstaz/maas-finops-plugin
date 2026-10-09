@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.3] - 2026-10-09
+
+### Added
+
+- Tokenomics page comparing consumed tokens with what they would cost as-a-service at public list prices across Azure Foundry, Azure OpenAI, AWS Bedrock, OpenAI, Anthropic Claude, and GitHub Copilot.
+- BFF endpoint `GET /api/tokenomics?range=` with multi-provider variant matching (normalized names, publisher prefixes, most-specific-key wins) and per-provider totals.
+- Copilot per-request premium pricing ($0.04 x multiplier) alongside per-token providers.
+
+### Changed
+
+- Published `quay.io/cestayg/maas-finops:0.1.3` and `quay.io/cestayg/maas-finops-bff:0.1.3` and synced Helm install documentation to that tag.
+
 ## [0.1.2] - 2026-09-24
 
 ### Added

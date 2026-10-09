@@ -102,6 +102,11 @@ func mockAPIKeys(window string, cat PricingCatalog) ApiKeysResponse {
 	}
 }
 
+func mockTokenomics(window string, cat PricingCatalog) TokenomicsResponse {
+	base := mockModels(window, cat)
+	return tokenomicsFromRows(window, cat, base.Items, "")
+}
+
 func mockInventory() ClusterInventory {
 	return ClusterInventory{
 		Provider:  "azure",

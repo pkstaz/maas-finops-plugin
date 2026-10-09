@@ -98,6 +98,17 @@ export const simulatorNavExtension = {
   },
 };
 
+export const tokenomicsNavExtension = {
+  type: 'app.navigation/href' as const,
+  properties: {
+    id: 'maas-finops-tokenomics',
+    title: 'Tokenomics',
+    href: '/maas-finops/tokenomics',
+    section: 'maas-finops',
+    path: '/maas-finops/tokenomics/*',
+  },
+};
+
 export const maasFinopsRouteExtension = {
   type: 'app.route' as const,
   properties: {
@@ -116,6 +127,7 @@ export const extensions = [
   apiKeysNavExtension,
   pricingNavExtension,
   simulatorNavExtension,
+  tokenomicsNavExtension,
   maasFinopsRouteExtension,
 ];
 

@@ -328,6 +328,55 @@ export interface SimulatorQuote {
 
 export const getSimulatorCatalog = () => request<SimulatorCatalogResponse>('/simulator');
 
+export interface TokenomicsVariant {
+  provider: string;
+  providerLabel: string;
+  model: string;
+  inputPerMillion?: number;
+  outputPerMillion?: number;
+  perRequest?: number;
+  mode: 'tokens' | 'requests';
+  cost: number;
+  note: string;
+}
+
+export interface TokenomicsRow {
+  name: string;
+  displayName: string;
+  kind: string;
+  origin?: string;
+  tokensIn: number;
+  tokensOut: number;
+  tokens: number;
+  requests: number;
+  maasCost: number;
+  variants: TokenomicsVariant[];
+}
+
+export interface TokenomicsProvider {
+  id: string;
+  label: string;
+  mode: 'tokens' | 'requests';
+  cost: number;
+}
+
+export interface TokenomicsResponse {
+  range: string;
+  currency: string;
+  source: string;
+  metricsError?: string;
+  tokensIn: number;
+  tokensOut: number;
+  tokens: number;
+  requests: number;
+  maasCost: number;
+  providers: TokenomicsProvider[];
+  items: TokenomicsRow[];
+}
+
+export const getTokenomics = (range: RangeKey) =>
+  request<TokenomicsResponse>(`/tokenomics?range=${range}`);
+
 export const getSimulatorQuote = (params: {
   provider: string;
   sku: string;

@@ -37,6 +37,12 @@ jest.mock('../pages/SimulatorPage', () => {
   return { __esModule: true, default: MockPage };
 });
 
+jest.mock('../pages/TokenomicsPage', () => {
+  const MockPage = () => <div data-testid="tokenomics-page">Tokenomics Page</div>;
+  MockPage.displayName = 'MockTokenomicsPage';
+  return { __esModule: true, default: MockPage };
+});
+
 describe('App Component', () => {
   it('should render the first route element', () => {
     render(<App />);

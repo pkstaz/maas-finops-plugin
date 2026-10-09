@@ -8,6 +8,7 @@ import {
   apiKeysNavExtension,
   pricingNavExtension,
   simulatorNavExtension,
+  tokenomicsNavExtension,
   maasFinopsRouteExtension,
   extensions,
 } from '../extensions';
@@ -56,6 +57,7 @@ describe('RHOAI Plugin Extensions', () => {
       [apiKeysNavExtension, 'maas-finops-api-keys', 'API keys', '/maas-finops/api-keys'],
       [pricingNavExtension, 'maas-finops-pricing', 'Pricing', '/maas-finops/pricing'],
       [simulatorNavExtension, 'maas-finops-simulator', 'Pricing Simulator', '/maas-finops/simulator'],
+      [tokenomicsNavExtension, 'maas-finops-tokenomics', 'Tokenomics', '/maas-finops/tokenomics'],
     ])('should define %s nav item', (ext, id, title, href) => {
       expect(ext.type).toBe('app.navigation/href');
       expect(ext.properties.id).toBe(id);
@@ -76,8 +78,8 @@ describe('RHOAI Plugin Extensions', () => {
   });
 
   describe('extensions array', () => {
-    it('should contain all ten extensions', () => {
-      expect(extensions).toHaveLength(10);
+    it('should contain all eleven extensions', () => {
+      expect(extensions).toHaveLength(11);
     });
 
     it('should include all extensions in the correct order', () => {
@@ -91,6 +93,7 @@ describe('RHOAI Plugin Extensions', () => {
         apiKeysNavExtension,
         pricingNavExtension,
         simulatorNavExtension,
+        tokenomicsNavExtension,
         maasFinopsRouteExtension,
       ]);
     });

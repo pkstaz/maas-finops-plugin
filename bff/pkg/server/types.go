@@ -232,3 +232,49 @@ type RecommendResponse struct {
 	NeedsManual bool                  `json:"needsManual"`
 	Notes       []string              `json:"notes"`
 }
+
+type TokenomicsVariant struct {
+	Provider         string  `json:"provider"`
+	ProviderLabel    string  `json:"providerLabel"`
+	Model            string  `json:"model"`
+	InputPerMillion  float64 `json:"inputPerMillion,omitempty"`
+	OutputPerMillion float64 `json:"outputPerMillion,omitempty"`
+	PerRequest       float64 `json:"perRequest,omitempty"`
+	Mode             string  `json:"mode"`
+	Cost             float64 `json:"cost"`
+	Note             string  `json:"note"`
+}
+
+type TokenomicsRow struct {
+	Name        string              `json:"name"`
+	DisplayName string              `json:"displayName"`
+	Kind        string              `json:"kind"`
+	Origin      string              `json:"origin,omitempty"`
+	TokensIn    float64             `json:"tokensIn"`
+	TokensOut   float64             `json:"tokensOut"`
+	Tokens      float64             `json:"tokens"`
+	Requests    float64             `json:"requests"`
+	MaasCost    float64             `json:"maasCost"`
+	Variants    []TokenomicsVariant `json:"variants"`
+}
+
+type TokenomicsProvider struct {
+	ID    string  `json:"id"`
+	Label string  `json:"label"`
+	Mode  string  `json:"mode"`
+	Cost  float64 `json:"cost"`
+}
+
+type TokenomicsResponse struct {
+	Range        string               `json:"range"`
+	Currency     string               `json:"currency"`
+	Source       string               `json:"source"`
+	MetricsError string               `json:"metricsError,omitempty"`
+	TokensIn     float64              `json:"tokensIn"`
+	TokensOut    float64              `json:"tokensOut"`
+	Tokens       float64              `json:"tokens"`
+	Requests     float64              `json:"requests"`
+	MaasCost     float64              `json:"maasCost"`
+	Providers    []TokenomicsProvider `json:"providers"`
+	Items        []TokenomicsRow      `json:"items"`
+}

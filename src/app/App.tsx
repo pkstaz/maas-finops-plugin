@@ -7,6 +7,7 @@ import SubscriptionsPage from './pages/SubscriptionsPage';
 import ApiKeysPage from './pages/ApiKeysPage';
 import PricingPage from './pages/PricingPage';
 import SimulatorPage from './pages/SimulatorPage';
+import TokenomicsPage from './pages/TokenomicsPage';
 
 const App: React.FC = () => (
   <div className="community-plugin-layout">
@@ -21,6 +22,7 @@ const App: React.FC = () => (
         <Route path="api-keys/*" element={<ApiKeysPage />} />
         <Route path="pricing/*" element={<PricingPage />} />
         <Route path="simulator/*" element={<SimulatorPage />} />
+        <Route path="tokenomics/*" element={<TokenomicsPage />} />
       </Routes>
     </div>
   </div>

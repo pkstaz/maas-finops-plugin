@@ -33,7 +33,7 @@ Images to publish every release:
 
 Copy and track:
 
-```
+```text
 Release:
 - [ ] Version chosen
 - [ ] podman logged in to quay.io
