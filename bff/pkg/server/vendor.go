@@ -80,18 +80,23 @@ var vendorRates = []VendorRate{
 	{"copilot", "gemini-2.0-flash", 0, 0, 0.01, "Copilot 0.25x premium request"},
 }
 
-// tokenomicsProviders is the fixed display order for the comparison table.
-var tokenomicsProviders = []struct {
+// referenceRates is the Tokenomics comparison set: the consumed tokens are
+// priced at the public list of these flagship as-a-service models (USD / 1M).
+var referenceRates = []VendorRate{
+	{"anthropic", "opus-4.8", 5.00, 25.00, 0, "Anthropic API list"},
+	{"google", "gemini-flash", 0.30, 2.50, 0, "Google AI Studio list"},
+	{"openai", "gpt-5", 1.25, 10.00, 0, "OpenAI API list"},
+}
+
+// referenceProviders is the fixed display order for the comparison table.
+var referenceProviders = []struct {
 	ID    string
 	Label string
 	Mode  string
 }{
-	{"azure-foundry", "Azure Foundry", "tokens"},
-	{"azure-openai", "Azure OpenAI", "tokens"},
-	{"bedrock", "AWS Bedrock", "tokens"},
-	{"openai", "OpenAI", "tokens"},
 	{"anthropic", "Anthropic Claude", "tokens"},
-	{"copilot", "GitHub Copilot", "requests"},
+	{"google", "Google AI", "tokens"},
+	{"openai", "OpenAI", "tokens"},
 }
 
 func originFromKind(kind string) string {

@@ -228,7 +228,8 @@ func (s *Server) handleTokenomics(w http.ResponseWriter, r *http.Request) {
 }
 
 // tokenomicsFromRows compares the consumed tokens per model with what those
-// tokens would cost at public as-a-service list prices across providers.
+// same tokens would cost at the public list prices of the reference
+// as-a-service models (Opus 4.8, Gemini Flash, GPT-5).
 func tokenomicsFromRows(window string, cat PricingCatalog, models []ModelRow, metricsErr string) TokenomicsResponse {
 	var totalIn, totalOut, totalTokens, totalReq, maas float64
 	byProvider := map[string]float64{}
@@ -244,24 +245,19 @@ func tokenomicsFromRows(window string, cat PricingCatalog, models []ModelRow, me
 			TokensIn: m.TokensIn, TokensOut: m.TokensOut, Tokens: m.Tokens, Requests: m.Requests,
 			MaasCost: m.Cost, Variants: []TokenomicsVariant{},
 		}
-		for _, v := range matchVendorRates(m.Name, m.DisplayName, m.TargetModel) {
+		for _, v := range referenceRates {
 			mode := "tokens"
 			cost := costOfSplit(m.TokensIn, m.TokensOut, m.Tokens, 0, v.InputPerMillion, v.OutputPerMillion)
-			for _, p := range tokenomicsProviders {
+			label := v.Provider
+			for _, p := range referenceProviders {
 				if p.ID == v.Provider {
 					mode = p.Mode
+					label = p.Label
 					break
 				}
 			}
 			if mode == "requests" {
 				cost = m.Requests * v.PerRequest
-			}
-			label := v.Provider
-			for _, p := range tokenomicsProviders {
-				if p.ID == v.Provider {
-					label = p.Label
-					break
-				}
 			}
 			row.Variants = append(row.Variants, TokenomicsVariant{
 				Provider: v.Provider, ProviderLabel: label, Model: v.Model,
@@ -272,8 +268,8 @@ func tokenomicsFromRows(window string, cat PricingCatalog, models []ModelRow, me
 		}
 		items = append(items, row)
 	}
-	providers := make([]TokenomicsProvider, 0, len(tokenomicsProviders))
-	for _, p := range tokenomicsProviders {
+	providers := make([]TokenomicsProvider, 0, len(referenceProviders))
+	for _, p := range referenceProviders {
 		providers = append(providers, TokenomicsProvider{ID: p.ID, Label: p.Label, Mode: p.Mode, Cost: byProvider[p.ID]})
 	}
 	return TokenomicsResponse{

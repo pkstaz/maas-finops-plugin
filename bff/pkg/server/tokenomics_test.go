@@ -77,8 +77,8 @@ func TestTokenomicsFromRows(t *testing.T) {
 	cat := defaultCatalog()
 	models := []ModelRow{
 		{
-			Name: "llama-31-instruct", DisplayName: "Llama-3.1-8B-Instruct (T4 W4A16)",
-			Kind: "LLMInferenceService", Origin: originRHOAI,
+			Name: "glm-53-flash", DisplayName: "glm-53-flash (TMM MaaS)",
+			Kind: "ExternalModel", Origin: originExternal, Provider: "openai", TargetModel: "glm-53-flash",
 			TokensIn: 80_000, TokensOut: 48_400, Tokens: 128_400, Requests: 842,
 			Cost: costOfSplit(80_000, 48_400, 128_400, 0.15, 0, 0),
 		},
@@ -97,48 +97,42 @@ func TestTokenomicsFromRows(t *testing.T) {
 	if diff := resp.MaasCost - wantMaas; diff < -1e-9 || diff > 1e-9 {
 		t.Fatalf("maas cost %v want %v", resp.MaasCost, wantMaas)
 	}
-	if len(resp.Providers) != 6 {
+	if len(resp.Providers) != 3 {
 		t.Fatalf("providers: %+v", resp.Providers)
 	}
-	if resp.Providers[0].ID != "azure-foundry" || resp.Providers[0].Mode != "tokens" {
-		t.Fatalf("first provider: %+v", resp.Providers[0])
-	}
-	if resp.Providers[5].ID != "copilot" || resp.Providers[5].Mode != "requests" {
-		t.Fatalf("copilot provider: %+v", resp.Providers[5])
-	}
-	llama := resp.Items[0]
-	if len(llama.Variants) != 2 {
-		t.Fatalf("llama variants: %+v", llama.Variants)
-	}
-	// 80000/1e6*0.30 + 48400/1e6*0.30 = 0.03852 on Azure Foundry.
-	if diff := llama.Variants[0].Cost - 0.03852; diff < -1e-9 || diff > 1e-9 {
-		t.Fatalf("azure-foundry llama cost %v", llama.Variants[0].Cost)
-	}
-	// 80000/1e6*0.22 + 48400/1e6*0.22 = 0.028248 on Bedrock.
-	if diff := llama.Variants[1].Cost - 0.028248; diff < -1e-9 || diff > 1e-9 {
-		t.Fatalf("bedrock llama cost %v", llama.Variants[1].Cost)
-	}
-	gpt := resp.Items[1]
-	providers := map[string]TokenomicsVariant{}
-	for _, v := range gpt.Variants {
-		providers[v.Provider] = v
-	}
-	// 12000/1e6*2.50 + 4000/1e6*10 = 0.07 per-token providers.
-	for _, id := range []string{"azure-foundry", "azure-openai", "openai"} {
-		if diff := providers[id].Cost - 0.07; diff < -1e-9 || diff > 1e-9 {
-			t.Fatalf("%s gpt-4o cost %v", id, providers[id].Cost)
+	wantOrder := []string{"anthropic", "google", "openai"}
+	for i, id := range wantOrder {
+		if resp.Providers[i].ID != id || resp.Providers[i].Mode != "tokens" {
+			t.Fatalf("provider %d: %+v", i, resp.Providers[i])
 		}
 	}
-	if providers["copilot"].Cost != 0 || providers["copilot"].Mode != "requests" {
-		t.Fatalf("copilot gpt-4o is 0x: %+v", providers["copilot"])
+	glm := resp.Items[0]
+	if len(glm.Variants) != 3 {
+		t.Fatalf("glm variants: %+v", glm.Variants)
 	}
-	var bedrockTotal float64
-	for _, p := range resp.Providers {
-		if p.ID == "bedrock" {
-			bedrockTotal = p.Cost
-		}
+	// 80000/1e6*5 + 48400/1e6*25 = 1.61 at Opus 4.8.
+	if diff := glm.Variants[0].Cost - 1.61; diff < -1e-9 || diff > 1e-9 {
+		t.Fatalf("anthropic glm cost %v", glm.Variants[0].Cost)
 	}
-	if diff := bedrockTotal - 0.028248; diff < -1e-9 || diff > 1e-9 {
-		t.Fatalf("bedrock total %v", bedrockTotal)
+	// 80000/1e6*0.30 + 48400/1e6*2.50 = 0.145 at Gemini Flash.
+	if diff := glm.Variants[1].Cost - 0.145; diff < -1e-9 || diff > 1e-9 {
+		t.Fatalf("google glm cost %v", glm.Variants[1].Cost)
+	}
+	// 80000/1e6*1.25 + 48400/1e6*10 = 0.584 at GPT-5.
+	if diff := glm.Variants[2].Cost - 0.584; diff < -1e-9 || diff > 1e-9 {
+		t.Fatalf("openai glm cost %v", glm.Variants[2].Cost)
+	}
+	if glm.Variants[0].Model != "opus-4.8" || glm.Variants[1].Model != "gemini-flash" || glm.Variants[2].Model != "gpt-5" {
+		t.Fatalf("variant models: %+v", glm.Variants)
+	}
+	// Provider totals sum both rows.
+	if diff := resp.Providers[0].Cost - 1.77; diff < -1e-9 || diff > 1e-9 {
+		t.Fatalf("anthropic total %v", resp.Providers[0].Cost)
+	}
+	if diff := resp.Providers[1].Cost - 0.1586; diff < -1e-9 || diff > 1e-9 {
+		t.Fatalf("google total %v", resp.Providers[1].Cost)
+	}
+	if diff := resp.Providers[2].Cost - 0.639; diff < -1e-9 || diff > 1e-9 {
+		t.Fatalf("openai total %v", resp.Providers[2].Cost)
 	}
 }

@@ -50,7 +50,6 @@ const TokenomicsPage: React.FC = () => {
 
   const cheapest = data ? cheapestProvider(data) : undefined;
   const savings = data && cheapest ? cheapest.cost - data.maasCost : 0;
-  const unmatched = data ? data.items.filter((i) => i.variants.length === 0).length : 0;
 
   return (
     <FinOpsPage
@@ -70,9 +69,9 @@ const TokenomicsPage: React.FC = () => {
             isInline
             title="What would these tokens cost as-a-service?"
           >
-            Consumed tokens are priced with the MaaS catalog. The provider columns use public list
-            prices (USD / 1M tokens). GitHub Copilot is per-request: premium requests cost $0.04 for
-            a 1x model, included base models cost nothing. Check the vendor account for EA/PTU discounts.
+            Consumed tokens are priced with the MaaS catalog. The reference columns use public list
+            prices (USD / 1M tokens) of Claude Opus 4.8 (Anthropic), Gemini Flash (Google AI), and
+            GPT-5 (OpenAI). Check the vendor account for committed-use discounts.
           </Alert>
           <div className="mfp-cards">
             <Card>
@@ -107,16 +106,8 @@ const TokenomicsPage: React.FC = () => {
             </Card>
           </div>
           <Card>
-            <CardTitle>Tokens vs public providers</CardTitle>
+            <CardTitle>Tokens vs public reference models</CardTitle>
             <CardBody>
-              {unmatched > 0 ? (
-                <Alert
-                  className="pf-v6-u-mb-md"
-                  variant="info"
-                  isInline
-                  title={`${unmatched} model(s) have no public as-a-service variant in the catalog.`}
-                />
-              ) : null}
               <Table aria-label="Tokenomics comparison" variant="compact">
                 <Thead>
                   <Tr>
