@@ -247,7 +247,13 @@ func tokenomicsFromRows(window string, cat PricingCatalog, models []ModelRow, me
 		}
 		for _, v := range referenceRates {
 			mode := "tokens"
-			cost := costOfSplit(m.TokensIn, m.TokensOut, m.Tokens, 0, v.InputPerMillion, v.OutputPerMillion)
+			var cost float64
+			if m.TokensIn > 0 || m.TokensOut > 0 {
+				cost = costOf(m.TokensIn, v.InputPerMillion) + costOf(m.TokensOut, v.OutputPerMillion)
+			} else {
+				// Limitador gives total tokens only; price at the blended 3:1 rate.
+				cost = costOf(m.Tokens, blendedPerMillion(v.InputPerMillion, v.OutputPerMillion))
+			}
 			label := v.Provider
 			for _, p := range referenceProviders {
 				if p.ID == v.Provider {

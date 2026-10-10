@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.5] - 2026-10-09
+
+### Fixed
+
+- Tokenomics reference costs were $0.00 when the in/out token split is unknown (Limitador total only): the total is now priced at the blended 3:1 input:output rate of each reference model.
+
+### Changed
+
+- Published `quay.io/cestayg/maas-finops:0.1.5` and `quay.io/cestayg/maas-finops-bff:0.1.5` and synced Helm install documentation to that tag.
+
 ## [0.1.4] - 2026-10-09
 
 ### Changed

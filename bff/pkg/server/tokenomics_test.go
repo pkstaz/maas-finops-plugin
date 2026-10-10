@@ -79,8 +79,9 @@ func TestTokenomicsFromRows(t *testing.T) {
 		{
 			Name: "glm-53-flash", DisplayName: "glm-53-flash (TMM MaaS)",
 			Kind: "ExternalModel", Origin: originExternal, Provider: "openai", TargetModel: "glm-53-flash",
-			TokensIn: 80_000, TokensOut: 48_400, Tokens: 128_400, Requests: 842,
-			Cost: costOfSplit(80_000, 48_400, 128_400, 0.15, 0, 0),
+			// Limitador total only: in/out split unknown.
+			TokensIn: 0, TokensOut: 0, Tokens: 642_200, Requests: 0,
+			Cost: costOf(642_200, 0.15),
 		},
 		{
 			Name: "gpt-4o", DisplayName: "gpt-4o (Azure AI Foundry)",
@@ -90,12 +91,8 @@ func TestTokenomicsFromRows(t *testing.T) {
 		},
 	}
 	resp := tokenomicsFromRows("24h", cat, models, "")
-	if resp.Tokens != 144_400 || resp.Requests != 882 {
+	if resp.Tokens != 658_200 || resp.Requests != 40 {
 		t.Fatalf("totals: %+v", resp)
-	}
-	wantMaas := costOfSplit(80_000, 48_400, 128_400, 0.15, 0, 0) + costOfSplit(12_000, 4_000, 16_000, 2.50, 2.50, 10)
-	if diff := resp.MaasCost - wantMaas; diff < -1e-9 || diff > 1e-9 {
-		t.Fatalf("maas cost %v want %v", resp.MaasCost, wantMaas)
 	}
 	if len(resp.Providers) != 3 {
 		t.Fatalf("providers: %+v", resp.Providers)
@@ -110,29 +107,29 @@ func TestTokenomicsFromRows(t *testing.T) {
 	if len(glm.Variants) != 3 {
 		t.Fatalf("glm variants: %+v", glm.Variants)
 	}
-	// 80000/1e6*5 + 48400/1e6*25 = 1.61 at Opus 4.8.
-	if diff := glm.Variants[0].Cost - 1.61; diff < -1e-9 || diff > 1e-9 {
-		t.Fatalf("anthropic glm cost %v", glm.Variants[0].Cost)
-	}
-	// 80000/1e6*0.30 + 48400/1e6*2.50 = 0.145 at Gemini Flash.
-	if diff := glm.Variants[1].Cost - 0.145; diff < -1e-9 || diff > 1e-9 {
-		t.Fatalf("google glm cost %v", glm.Variants[1].Cost)
-	}
-	// 80000/1e6*1.25 + 48400/1e6*10 = 0.584 at GPT-5.
-	if diff := glm.Variants[2].Cost - 0.584; diff < -1e-9 || diff > 1e-9 {
-		t.Fatalf("openai glm cost %v", glm.Variants[2].Cost)
+	// Total-only row: blended 3:1 rates (10, 0.85, 3.4375) over 642200 tokens.
+	wantBlended := []float64{6.422, 0.54587, 2.2075625}
+	for i, want := range wantBlended {
+		if diff := glm.Variants[i].Cost - want; diff < -2e-6 || diff > 2e-6 {
+			t.Fatalf("glm variant %d cost %v want %v", i, glm.Variants[i].Cost, want)
+		}
 	}
 	if glm.Variants[0].Model != "opus-4.8" || glm.Variants[1].Model != "gemini-flash" || glm.Variants[2].Model != "gpt-5" {
 		t.Fatalf("variant models: %+v", glm.Variants)
 	}
+	gpt := resp.Items[1]
+	// Split row: 12000/1e6*in + 4000/1e6*out.
+	wantSplit := []float64{0.16, 0.0136, 0.055}
+	for i, want := range wantSplit {
+		if diff := gpt.Variants[i].Cost - want; diff < -2e-6 || diff > 2e-6 {
+			t.Fatalf("gpt-4o variant %d cost %v want %v", i, gpt.Variants[i].Cost, want)
+		}
+	}
 	// Provider totals sum both rows.
-	if diff := resp.Providers[0].Cost - 1.77; diff < -1e-9 || diff > 1e-9 {
-		t.Fatalf("anthropic total %v", resp.Providers[0].Cost)
-	}
-	if diff := resp.Providers[1].Cost - 0.1586; diff < -1e-9 || diff > 1e-9 {
-		t.Fatalf("google total %v", resp.Providers[1].Cost)
-	}
-	if diff := resp.Providers[2].Cost - 0.639; diff < -1e-9 || diff > 1e-9 {
-		t.Fatalf("openai total %v", resp.Providers[2].Cost)
+	wantTotals := []float64{6.582, 0.55947, 2.2625625}
+	for i, want := range wantTotals {
+		if diff := resp.Providers[i].Cost - want; diff < -2e-6 || diff > 2e-6 {
+			t.Fatalf("provider %d total %v want %v", i, resp.Providers[i].Cost, want)
+		}
 	}
 }

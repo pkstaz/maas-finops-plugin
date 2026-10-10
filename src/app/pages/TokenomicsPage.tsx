@@ -71,7 +71,8 @@ const TokenomicsPage: React.FC = () => {
           >
             Consumed tokens are priced with the MaaS catalog. The reference columns use public list
             prices (USD / 1M tokens) of Claude Opus 4.8 (Anthropic), Gemini Flash (Google AI), and
-            GPT-5 (OpenAI). Check the vendor account for committed-use discounts.
+            GPT-5 (OpenAI). When the in/out split is unknown (Limitador total only), costs use a
+            blended 3:1 input:output rate. Check the vendor account for committed-use discounts.
           </Alert>
           <div className="mfp-cards">
             <Card>
